@@ -3,10 +3,26 @@ class Demo1 extends AdventureScene {
         super("demo1", "First Room");
     }
 
+    preload() {
+        this.load.path = "./assets/";
+        this.load.image("bedroom", "image/Your Room.png");
+    }  
+
     onEnter() {
+        // Load the background image
+        let bg = this.add.image(0, 0, "bedroom");
+
+        // Set the position to the center of the canvas
+        bg.setPosition(this.cameras.main.centerX - (this.w * 0.125), this.cameras.main.centerY);
+
+        let scaleFactor = (this.cameras.main.width - this.w * 0.25) / bg.width;
+
+        // Scale the image to fit the canvas
+        bg.setScale((this.cameras.main.width - this.w * 0.25) / bg.width, this.cameras.main.height / bg.height);
 
         let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
             .setFontSize(this.s * 2)
+            .setColor("#0000ff")
             .setInteractive()
             .on('pointerover', () => this.showMessage("Metal, bent."))
             .on('pointerdown', () => {
@@ -21,33 +37,68 @@ class Demo1 extends AdventureScene {
                 });
             });
 
-        let key = this.add.text(this.w * 0.5, this.w * 0.1, "🔑 key")
+        let phone = this.add.text(this.w * 0.5, this.w * 0.1, "📱 phone")
             .setFontSize(this.s * 2)
+            .setColor("#0000ff")
             .setInteractive()
             .on('pointerover', () => {
-                this.showMessage("It's a nice key.")
+                this.showMessage("It's your mobile phone.")
             })
             .on('pointerdown', () => {
-                this.showMessage("You pick up the key.");
-                this.gainItem('key');
+                this.showMessage("You pick up the phone.");
+                this.gainItem('phone');
                 this.tweens.add({
-                    targets: key,
+                    targets: phone,
                     y: `-=${2 * this.s}`,
                     alpha: { from: 1, to: 0 },
                     duration: 500,
-                    onComplete: () => key.destroy()
+                    onComplete: () => phone.destroy()
                 });
             })
 
-        let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 locked door")
+            let knife = this.add.text(this.w * 0.1, this.w * 0.1, "📱 knife")
             .setFontSize(this.s * 2)
+            .setColor("#0000ff")
             .setInteractive()
             .on('pointerover', () => {
-                if (this.hasItem("key")) {
-                    this.showMessage("You've got the key for this door.");
-                } else {
-                    this.showMessage("It's locked. Can you find a key?");
-                }
+                this.showMessage("It's a knife.")
+            })
+            .on('pointerdown', () => {
+                this.showMessage("You pick up the knife.");
+                this.gainItem('knife');
+                this.tweens.add({
+                    targets: knife,
+                    y: `-=${2 * this.s}`,
+                    alpha: { from: 1, to: 0 },
+                    duration: 500,
+                    onComplete: () => knife.destroy()
+                });
+            })
+
+            let light = this.add.text(this.w * 0.3, this.w * 0.1, "📱 flashlight")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("It's a flashlight.")
+            })
+            .on('pointerdown', () => {
+                this.showMessage("You pick up the flashlight.");
+                this.gainItem('light');
+                this.tweens.add({
+                    targets: light,
+                    y: `-=${2 * this.s}`,
+                    alpha: { from: 1, to: 0 },
+                    duration: 500,
+                    onComplete: () => light.destroy()
+                });
+            })
+        let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 door")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Go outside?");
             })
             .on('pointerdown', () => {
                 if (this.hasItem("key")) {
@@ -57,7 +108,10 @@ class Demo1 extends AdventureScene {
                     this.gotoScene('demo2');
                 }
             })
+    }
 
+    resizeBackground(width, height) {
+        this.background.setDisplaySize(width - (width * 0.25), height);
     }
 }
 
