@@ -1,6 +1,6 @@
-class Demo1 extends AdventureScene {
+class firstRoom extends AdventureScene {
     constructor() {
-        super("demo1", "First Room");
+        super("firstRoom", "Your studio");
     }
 
     preload() {
@@ -14,21 +14,40 @@ class Demo1 extends AdventureScene {
 
         // Set the position to the center of the canvas
         bg.setPosition(this.cameras.main.centerX - (this.w * 0.125), this.cameras.main.centerY);
-
-        let scaleFactor = (this.cameras.main.width - this.w * 0.25) / bg.width;
-
         // Scale the image to fit the canvas
         bg.setScale((this.cameras.main.width - this.w * 0.25) / bg.width, this.cameras.main.height / bg.height);
 
-        let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
+        let bedText = this.add.text(0, this.h * 0.8, " 🛏️ Bed")
             .setFontSize(this.s * 2)
             .setColor("#0000ff")
             .setInteractive()
-            .on('pointerover', () => this.showMessage("Metal, bent."))
+            .on('pointerover', () => {
+                this.showMessage("Your comfy bed\nBack to sleep?");
+            })
             .on('pointerdown', () => {
-                this.showMessage("No touching!");
+                this.showMessage("Lying down.");
+                this.gotoScene('neutral');
+            })
+            
+        let bed =  this.add.rectangle(0, this.h * 0.85, this.w * 0.11, this.h * 0.05).setOrigin(0, 0).setFillStyle(0x444, 1)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Your comfy bed\nBack to sleep?");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("Lying down.");
+                this.gotoScene('neutral');
+            })
+
+        let comp = this.add.text(this.w * 0.6, this.w * 0.15, " 💻 computer")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("Your trusty PC."))
+            .on('pointerdown', () => {
+                this.showMessage("Too late to get online!");
                 this.tweens.add({
-                    targets: clip,
+                    targets: comp,
                     x: '+=' + this.s,
                     repeat: 2,
                     yoyo: true,
@@ -37,7 +56,7 @@ class Demo1 extends AdventureScene {
                 });
             });
 
-        let phone = this.add.text(this.w * 0.5, this.w * 0.1, "📱 phone")
+        let phone = this.add.text(this.w * 0.58, this.h * 0.6, "📱 phone")
             .setFontSize(this.s * 2)
             .setColor("#0000ff")
             .setInteractive()
@@ -75,7 +94,7 @@ class Demo1 extends AdventureScene {
                 });
             })
 
-            let light = this.add.text(this.w * 0.3, this.w * 0.1, "📱 flashlight")
+            let light = this.add.text(this.w * 0.3, this.w * 0.1, "🔦 flashlight")
             .setFontSize(this.s * 2)
             .setColor("#0000ff")
             .setInteractive()
@@ -93,7 +112,8 @@ class Demo1 extends AdventureScene {
                     onComplete: () => light.destroy()
                 });
             })
-        let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 door")
+
+           let door = this.add.text(this.w * 0.05, this.h * 0.15, "🚪 door")
             .setFontSize(this.s * 2)
             .setColor("#0000ff")
             .setInteractive()
@@ -101,12 +121,9 @@ class Demo1 extends AdventureScene {
                 this.showMessage("Go outside?");
             })
             .on('pointerdown', () => {
-                if (this.hasItem("key")) {
-                    this.loseItem("key");
-                    this.showMessage("*squeak*");
-                    door.setText("🚪 unlocked door");
-                    this.gotoScene('demo2');
-                }
+                this.showMessage("*squeak*");
+                door.setText("🚪 Going out");
+                this.gotoScene('outside');
             })
     }
 
@@ -115,9 +132,9 @@ class Demo1 extends AdventureScene {
     }
 }
 
-class Demo2 extends AdventureScene {
+class outside extends AdventureScene {
     constructor() {
-        super("demo2", "The second room has a long name (it truly does).");
+        super("outside", "Outside.");
     }
     onEnter() {
         this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
@@ -127,7 +144,7 @@ class Demo2 extends AdventureScene {
                 this.showMessage("You've got no other choice, really.");
             })
             .on('pointerdown', () => {
-                this.gotoScene('demo1');
+                this.gotoScene('firstRoom');
             });
 
         let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
@@ -151,11 +168,11 @@ class Intro extends Phaser.Scene {
         super('intro')
     }
     create() {
-        this.add.text(50,50, "Adventure awaits!").setFontSize(50);
+        this.add.text(50,50, "It's midnight and you woke up from a loud sound!").setFontSize(50);
         this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start('demo1'));
+            this.time.delayedCall(1000, () => this.scene.start('firstRoom'));
         });
     }
 }
@@ -167,10 +184,20 @@ class Outro extends Phaser.Scene {
     create() {
         this.add.text(50, 50, "That's all!").setFontSize(50);
         this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
-        this.input.on('pointerdown', () => this.scene.start('intro'));
+        this.input.on('pointerdown', () => this.scene.start('firstRoom'));
     }
 }
 
+class Neutral extends Phaser.Scene {
+    constructor() {
+        super('neutral');
+    }
+    create() {
+        this.add.text(50, 50, "That's all!").setFontSize(50);
+        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
+        this.input.on('pointerdown', () => this.scene.start('firstRoom'));
+    }
+}
 
 const game = new Phaser.Game({
     scale: {
@@ -179,7 +206,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, Demo1, Demo2, Outro],
+    scene: [Intro, firstRoom, outside, Neutral, Outro],
     title: "Adventure Game",
 });
 
