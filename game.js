@@ -136,30 +136,164 @@ class outside extends AdventureScene {
     constructor() {
         super("outside", "Outside.");
     }
+
+    preload() {
+        this.load.path = "./assets/";
+        this.load.image("out", "image/outside.png");
+    }  
+
     onEnter() {
-        this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
+
+        let bg = this.add.image(0, 0, "out");
+
+        // Set the position to the center of the canvas
+        bg.setPosition(this.cameras.main.centerX - (this.w * 0.125), this.cameras.main.centerY);
+        // Scale the image to fit the canvas
+        bg.setScale((this.cameras.main.width - this.w * 0.25) / bg.width, this.cameras.main.height / bg.height);
+
+        this.add.text(0, this.h * 0.9, "Just go back")
             .setFontSize(this.s * 2)
+            .setColor("#ffffff")
             .setInteractive()
             .on('pointerover', () => {
-                this.showMessage("You've got no other choice, really.");
+                this.showMessage("It's pretty cold out here.");
             })
             .on('pointerdown', () => {
                 this.gotoScene('firstRoom');
             });
 
-        let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
+            let door =  this.add.rectangle(this.w * 0.65, this.h * 0.55, this.w * 0.1, this.h * 0.55).setOrigin(0, 0).setFillStyle(0x885800, 1)
             .setInteractive()
             .on('pointerover', () => {
-                this.showMessage('*giggles*');
+                this.showMessage("Go through the backdoor?");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("*squeak*");
+                doorText.setText("🚪 Going in");
+                this.gotoScene('hall');
+            })
+
+            let doorText = this.add.text(this.w * 0.55, this.h * 0.5, "🚪 Back door ⬇️")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Go through the back door?");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("*squeak*");
+                doorText.setText("🚪 Going in");
+                this.gotoScene('hall');
+            })
+            this.tweens.add({
+                targets: doorText,
+                y: '+=10',
+                duration: 1000,
+                yoyo: true,
+                repeat: -1
+            });
+
+            let FrontdoorText = this.add.text(this.w * 0.12, this.h * 0.6, "    ⬆️\n🚪 Front door")
+            .setFontSize(this.s * 2)
+            .setColor("#ffffff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Go through the front door?");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("*squeak*");
+                FrontdoorText.setText("🚪 Going through\nthe front door");
+                this.gotoScene('kitchen');
+            })
+            this.tweens.add({
+                targets: FrontdoorText,
+                y: '-=10',
+                duration: 1000,
+                yoyo: true,
+                repeat: -1
+            });
+    }
+}
+
+class Hall extends AdventureScene {
+    constructor() {
+        super("hall", "Hallway.");
+    }
+
+    preload() {
+        this.load.path = "./assets/";
+        this.load.image("hall", "image/hall.png");
+    }  
+
+    onEnter() {
+
+        let bg = this.add.image(0, 0, "hall");
+
+        // Set the position to the center of the canvas
+        bg.setPosition(this.cameras.main.centerX - (this.w * 0.125), this.cameras.main.centerY);
+        // Scale the image to fit the canvas
+        bg.setScale((this.cameras.main.width - this.w * 0.25) / bg.width, this.cameras.main.height / bg.height);
+
+        this.add.text(0, this.h * 0.9, "Just go back")
+            .setFontSize(this.s * 2)
+            .setColor("#000000")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("I should go back to my room.");
+            })
+            .on('pointerdown', () => {
+                this.gotoScene('outside');
+            });
+
+            let text = this.add.text(this.w * 0.5, this.h * 0.2, "🚪 Living room ➡️")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Go to the living room");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("*squeak*");
+                text.setText("🚪 Going in");
+                this.gotoScene('final');
+            })
+
+            this.tweens.add({
+                targets: text,
+                x: '-=10',
+                duration: 1000,
+                yoyo: true,
+                repeat: -1
+            });
+
+            let door =  this.add.rectangle(this.w * 0.15, this.h * 0.55, this.w * 0.15, this.h * 0.55).setOrigin(0, 0).setFillStyle(0x6B4E32, 1)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Your housemate's room");
+            })
+            .on('pointerdown', () => {
+                this.showMessage("Don't enter without permission!");
+            })
+
+            let light = this.add.text(this.w * 0.5, this.h * 0.65, "flashlight\n🔦")
+            .setFontSize(this.s * 2)
+            .setColor("#0000ff")
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("It's a flashlight.")
+            })
+            .on('pointerdown', () => {
+                this.showMessage("You pick up the flashlight.");
+                this.gainItem('light');
                 this.tweens.add({
-                    targets: finish,
-                    x: this.s + (this.h - 2 * this.s) * Math.random(),
-                    y: this.s + (this.h - 2 * this.s) * Math.random(),
-                    ease: 'Sine.inOut',
-                    duration: 500
+                    targets: light,
+                    y: `-=${2 * this.s}`,
+                    alpha: { from: 1, to: 0 },
+                    duration: 500,
+                    onComplete: () => light.destroy()
                 });
             })
-            .on('pointerdown', () => this.gotoScene('outro'));
+
     }
 }
 
@@ -206,7 +340,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, firstRoom, outside, Neutral, Outro],
+    scene: [Intro, firstRoom, outside, Hall, Neutral, Outro],
     title: "Adventure Game",
 });
 
